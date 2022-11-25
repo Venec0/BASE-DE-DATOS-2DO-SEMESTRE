@@ -25,16 +25,16 @@ ORDER BY cli.appaterno ASC, "MONTO TOTAL AHORRADO" DESC
 
 --CASO N°2
 
+
 SELECT
-    TO_CHAR(mov.fecha_movimiento, 'mmyyyy')-1 AS "MES TRANSACCIÓN",
-    UPPER(c.nombre_credito) AS "TIPO CREDITO"
-FROM mdy2131_p11_1.movimiento mov
-    JOIN producto_inversion_cliente pic ON mov.nro_solic_prod = pic.nro_solic_prod
-    JOIN cliente cli ON pic.nro_cliente = cli.nro_cliente
-    JOIN credito_cliente cc ON cli.nro_cliente = cc.nro_cliente
-    JOIN credito c ON cc.cod_credito = c.cod_credito
+    TO_CHAR(cc.fecha_otorga_cred, 'mmyyyy') AS "MES TRANSACCIÓN",
+    c.nombre_credito AS "TIPO CRÉDITO",
+    SUM(monto_credito) AS "MONTO SOLICITADO CRÉDITO",
+    SUM(monto_credito*(sbif.porc_entrega_sbif/100)) AS "APORTE A LA SBIF"
+FROM mdy2131_p11_1.credito_cliente cc
+    JOIN mdy2131_p11_1.credito c ON c.cod_credito = cc.cod_credito
+    JOIN mdy2131_p11_1.aporte_a_sbif sbif ON cc.monto_credito BETWEEN sbif.monto_credito_desde AND sbif.monto_credito_hasta
+WHERE EXTRACT(YEAR FROM cc.fecha_otorga_cred) = EXTRACT(YEAR FROM SYSDATE)-1
+GROUP BY cc.fecha_otorga_cred, c.nombre_credito
+ORDER BY "MES TRANSACCIÓN" ASC, "TIPO CRÉDITO"
 ;
-
---VER DE QUÉ MANERA HACER APARECER ÚNICAMENTE CRÉDITO HIPOTECARIO, CONSUMO Y AUTOMOTRIZ.
---VER CÓMO AGREGAR APORTE A SBIF.
-
