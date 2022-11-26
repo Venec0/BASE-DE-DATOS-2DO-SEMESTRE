@@ -1,7 +1,7 @@
 --CASO N°1
 
 SELECT
-    cli.numrun||'-'||INITCAP(cli.dvrun) AS "RUN CLIENTE",
+    TO_CHAR(cli.numrun, '99G999G999')||'-'||INITCAP(cli.dvrun) AS "RUN CLIENTE",
     cli.pnombre||' '||cli.snombre||' '||cli.appaterno||' '||cli.apmaterno AS "NOMBRE CLIENTE",
     po.nombre_prof_ofic AS "PROFESIÓN U OFICIO",
     tc.nombre_tipo_contrato AS "TIPO CONTRATO",
